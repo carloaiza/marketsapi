@@ -11,6 +11,10 @@ class UserService:
 
     def save_user(self,data):
         connection = MongoApi(self.data)
+        key = data['key']
+        validation = connection.read_by_filter({key:data['Document'][key]})
+        if(len(validation)>0):
+            raise Exception("Ya existe un usuario con los datos suministrados")
         response = connection.write(data)
         return response
 
@@ -25,3 +29,9 @@ class UserService:
         connection = MongoApi(self.data)
         response = connection.delete(data)
         return response
+
+    def get_all_users_by_filter(self,filter):
+        connection = MongoApi(self.data)
+        response = connection.read_by_filter(filter)
+        return response
+

@@ -7,6 +7,7 @@ class MongoApi:
         collection = data['collection']
         cursor = self.client[database]
         self.collection = cursor[collection]
+        self.data=data
 
     def read(self):
         documents = self.collection.find()
@@ -33,3 +34,7 @@ class MongoApi:
         output = {'Status': 'Successfully Deleted' if response.deleted_count > 0 else "Documento no encontrado."}
         return output
 
+    def read_by_filter(self,filter):
+        documents = self.collection.find(filter)
+        output = [{item: data[item] for item in data if item != '_id'} for data in documents]
+        return output

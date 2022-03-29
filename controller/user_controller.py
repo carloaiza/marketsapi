@@ -17,10 +17,20 @@ def save_user():
                         "Please provide connection information"}),
                         status=400,
                         mimetype='application/json')
-    response = user_service.save_user(data)
-    return Response(response=json.dumps(response),
+    if 'key' not in data or data['key'] not in data['Document']:
+        return Response(response=json.dumps({"Error":
+                                                 "Key not configured"}),
+                        status=400,
+                        mimetype='application/json')
+    try:
+        response = user_service.save_user(data)
+        return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
+    except Exception as e:
+        return Response(response=json.dumps({"message":str(e)}),
+                        status=409,
+                        mimetype='application/json')
 
 @app_user.route('/user', methods=['PUT'])
 def update_user():
@@ -43,6 +53,19 @@ def delete_user():
                         status=400,
                         mimetype='application/json')
     response = user_service.delete_user(data)
+    return Response(response=json.dumps(response),
+                    status=200,
+                    mimetype='application/json')
+
+@app_user.route('/user/byfilter',methods=['POST'])
+def get_users_by_filter():
+    data = request.json
+    if data is None or data == {} or 'Filter' not in data:
+        return Response(response=json.dumps({"Error":
+                        "Please provide connection information"}),
+                        status=400,
+                        mimetype='application/json')
+    response = user_service.get_all_users_by_filter(data['Filter'])
     return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
