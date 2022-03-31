@@ -1,15 +1,15 @@
-from flask import Response,Blueprint, json, request
-from service.user_service import UserService
+from flask import Response,json,Blueprint,request
+from service.branch_office_service import BranchOfficeService
 
-app_user = Blueprint('app_user',__name__)
-user_service = UserService()
+app_branch = Blueprint('app_branch',__name__)
+branch_office_service = BranchOfficeService()
 
-@app_user.route('/user', methods=['GET'])
+@app_branch.route('/branchoffice', methods=['GET'])
 def get_all_users():  # put application's code here
-    return Response(response=json.dumps(user_service.get_all()),status=200,
+    return Response(response=json.dumps(branch_office_service.get_all()),status=200,
                     mimetype='application/json')
 
-@app_user.route('/user',methods=['POST'])
+@app_branch.route('/branchoffice',methods=['POST'])
 def save_user():
     data = request.json
     if data is None or data == {} or 'Document' not in data:
@@ -23,7 +23,7 @@ def save_user():
                         status=400,
                         mimetype='application/json')
     try:
-        response = user_service.save(data,"Ya existe un usuario para los datos suministrados")
+        response = branch_office_service.save(data,"Ya existe una sucursal para los datos suministrados")
         return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
@@ -32,32 +32,32 @@ def save_user():
                         status=409,
                         mimetype='application/json')
 
-@app_user.route('/user', methods=['PUT'])
+@app_branch.route('/branchoffice', methods=['PUT'])
 def update_user():
     data = request.json
     if data is None or data == {} or 'Filter' not in data:
         return Response(response=json.dumps({"Error": "Please provide connection information"}),
                         status=400,
                         mimetype='application/json')
-    response = user_service.update(data)
+    response = branch_office_service.update(data)
     return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
 
 
-@app_user.route('/user', methods=['DELETE'])
+@app_branch.route('/branchoffice', methods=['DELETE'])
 def delete_user():
     data = request.json
     if data is None or data == {} or 'Filter' not in data:
         return Response(response=json.dumps({"Error": "Please provide connection information"}),
                         status=400,
                         mimetype='application/json')
-    response = user_service.delete(data)
+    response = branch_office_service.delete(data)
     return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
 
-@app_user.route('/user/byfilter',methods=['POST'])
+@app_branch.route('/branchoffice/byfilter',methods=['POST'])
 def get_users_by_filter():
     data = request.json
     if data is None or data == {} or 'Filter' not in data:
@@ -65,7 +65,7 @@ def get_users_by_filter():
                         "Please provide connection information"}),
                         status=400,
                         mimetype='application/json')
-    response = user_service.get_all_by_filter(data['Filter'])
+    response = branch_office_service.get_all_by_filter(data['Filter'])
     return Response(response=json.dumps(response),
                     status=200,
                     mimetype='application/json')
