@@ -17,6 +17,7 @@ class GenericService:
         validation = connection.read_by_filter({key:data['Document'][key]})
         if(len(validation)>0):
             raise Exception(message)
+        data['Document']['type']=self.type
         response = connection.write(data)
         return response
 
